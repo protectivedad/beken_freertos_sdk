@@ -345,6 +345,12 @@ DEPENDENCY_LIST += $(SRC_RF_TEST_C:%.c=$(OBJ_DIR)/%.d)
 OBJ_RF_USE_LIST = $(SRC_RF_USE_C:%.c=$(OBJ_DIR)/%.o)
 DEPENDENCY_LIST += $(SRC_RF_USE_C:%.c=$(OBJ_DIR)/%.d)
 
+OBJ_CODEC_HELIX_LIST = $(SRC_CODEC_HELIX_C:%.c=$(OBJ_DIR)/%.o)
+DEPENDENCY_LIST += $(SRC_CODEC_HELIX_C:%.c=$(OBJ_DIR)/%.d)
+
+OBJ_BK_PLAYER_LIST = $(SRC_BK_PLAYER_C:%.c=$(OBJ_DIR)/%.o)
+DEPENDENCY_LIST += $(SRC_BK_PLAYER_C:%.c=$(OBJ_DIR)/%.d)
+
 OBJ_BLE_PUB_LIST = $(SRC_BLE_PUB_C:%.c=$(OBJ_DIR)/%.o)
 DEPENDENCY_PUB_LIST += $(SRC_BLE_PUB_C:%.c=$(OBJ_DIR)/%.d)
 
@@ -540,6 +546,9 @@ SUPPLICANT_LIB  = ./beken378/lib/libsupplicant.a
 UART_DEBUG_LIB  = ./beken378/lib/libuart_debug.a
 RF_TEST_LIB  = ./beken378/lib/librf_test.a
 RF_USE_LIB  = ./beken378/lib/librf_use.a
+CODEC_HELIX_LIB  = ./beken378/lib/libcodec_helix.a
+BK_PLAYER_LIB = ./beken378/lib/libbk_player.a
+
 ifeq ($(CFG_SUPPORT_MATTER), 1)
 CHIP_MATTER_LIB = $(CHIP_LIB_PATH)/libMatterApp.a
 endif
@@ -569,22 +578,26 @@ LIBFLAGS += -L./beken378/lib -lsupplicant
 LIBFLAGS += -L./beken378/lib -luart_debug
 LIBFLAGS += -L./beken378/lib -lrf_test
 LIBFLAGS += -L./beken378/lib -lrf_use
+LIBFLAGS += -L./beken378/lib -lbk_player
+LIBFLAGS += -L./beken378/lib -lcodec_helix
 LIBFLAGS += -L./ -lble_pub -los -llwip -lwolfssl -lmbedtls -ldriver -lfunc -lmisc -lsrc_s
 
 .PHONY: application
 ifeq  ("${CFG_SUPPORT_RTOS}", "4")
-application: $(WPA_LIB) $(RWNX_LIB) $(USB_LIB) $(SENSOR_LIB) $(BK_AWARE_LIB) $(BLE_LIB) $(CAL_LIB) $(SUPPLICANT_LIB) $(UART_DEBUG_LIB) $(RF_TEST_LIB) $(RF_USE_LIB) $(BLE_PUB_LIB) $(OS_LIB) $(LWIP_LIB) $(WOLFSSL_LIB) $(MBEDTLS_LIB) $(DRIVER_LIB) $(FUNC_LIB) $(MISC_LIB) bksdk
+application: $(WPA_LIB) $(RWNX_LIB) $(USB_LIB) $(SENSOR_LIB) $(BK_AWARE_LIB) $(BLE_LIB) $(CAL_LIB) $(SUPPLICANT_LIB) $(UART_DEBUG_LIB) $(RF_TEST_LIB) $(RF_USE_LIB) $(CODEC_HELIX_LIB) $(BK_PLAYER_LIB) $(BLE_PUB_LIB) $(OS_LIB) $(LWIP_LIB) $(WOLFSSL_LIB) $(MBEDTLS_LIB) $(DRIVER_LIB) $(FUNC_LIB) $(MISC_LIB) bksdk
 else
 ifeq  ($(CFG_SUPPORT_MATTER), 1)
-application: $(WPA_LIB) $(RWNX_LIB) $(USB_LIB) $(SENSOR_LIB) $(BK_AWARE_LIB) $(BLE_LIB) $(CAL_LIB) $(SUPPLICANT_LIB) $(UART_DEBUG_LIB) $(RF_TEST_LIB) $(RF_USE_LIB) $(BLE_PUB_LIB) $(OS_LIB) $(LWIP_LIB) $(WOLFSSL_LIB) $(MBEDTLS_LIB) $(DRIVER_LIB) $(FUNC_LIB) $(MISC_LIB) $(SRC_S_LIB) CHIP
+application: $(WPA_LIB) $(RWNX_LIB) $(USB_LIB) $(SENSOR_LIB) $(BK_AWARE_LIB) $(BLE_LIB) $(CAL_LIB) $(SUPPLICANT_LIB) $(UART_DEBUG_LIB) $(RF_TEST_LIB) $(RF_USE_LIB) $(CODEC_HELIX_LIB) $(BK_PLAYER_LIB) $(BLE_PUB_LIB) $(OS_LIB) $(LWIP_LIB) $(WOLFSSL_LIB) $(MBEDTLS_LIB) $(DRIVER_LIB) $(FUNC_LIB) $(MISC_LIB) $(SRC_S_LIB) CHIP
 else
-application: $(WPA_LIB) $(RWNX_LIB) $(USB_LIB) $(SENSOR_LIB) $(BK_AWARE_LIB) $(BLE_LIB) $(CAL_LIB) $(SUPPLICANT_LIB) $(UART_DEBUG_LIB) $(RF_TEST_LIB) $(RF_USE_LIB) $(BLE_PUB_LIB) $(OS_LIB) $(LWIP_LIB) $(WOLFSSL_LIB) $(MBEDTLS_LIB) $(DRIVER_LIB) $(FUNC_LIB) $(MISC_LIB) $(SRC_S_LIB)
+application: $(WPA_LIB) $(RWNX_LIB) $(USB_LIB) $(SENSOR_LIB) $(BK_AWARE_LIB) $(BLE_LIB) $(CAL_LIB) $(SUPPLICANT_LIB) $(UART_DEBUG_LIB) $(RF_TEST_LIB) $(RF_USE_LIB) $(CODEC_HELIX_LIB) $(BK_PLAYER_LIB) $(BLE_PUB_LIB) $(OS_LIB) $(LWIP_LIB) $(WOLFSSL_LIB) $(MBEDTLS_LIB) $(DRIVER_LIB) $(FUNC_LIB) $(MISC_LIB) $(SRC_S_LIB)
 endif
 endif
 
 	@$(ECHO) "  $(GREEN)LD   $(BIN_DIR)/$(SOC_NAME_ELF)$(NC)"
 	$(Q)$(CC) -E -x c -P ./build/$(SOC_NAME_BSP_LDS) -o ./build/$(SOC_BSP_LDS)
 	$(Q)$(CC) -E -x c -P ./build/$(SOC_NAME_LDS) -o ./build/$(SOC_LDS)
+	$(Q)$(CC) -E -x c -P ./beken378/func/user_driver/BkFlashPartition.h -o ./tools/beken_packager/flash_partition.o -I ./config
+
 ifeq  ($(CFG_SUPPORT_MATTER), 1)
 	$(Q)$(LD) $(LFLAGS) -o $(BIN_DIR)/$(SOC_NAME_ELF) -Wl,--start-group $(LIBFLAGS) -lg_nano -Wl,--end-group -T./build/$(SOC_LDS) -Xlinker -Map=$(BIN_DIR)/$(SOC_NAME_MAP)
 else
@@ -608,7 +621,7 @@ endif
 	@$(ECHO) ================================================
 
 #	$(Q)-rm -rf $(BLE_PUB_LIB) $(OS_LIB) $(LWIP_LIB) $(WOLFSSL_LIB) $(MBEDTLS_LIB) $(DRIVER_LIB) $(FUNC_LIB) $(MISC_LIB) $(SRC_S_LIB)
-
+	$(Q)(cd ./tools/beken_packager; python gen_partition flash_partition.o; rm flash_partition.o; )
 	$(Q)(cd ./tools/beken_packager; $(ECHO) "  $(GREEN)PACK $(SOC_NAME_BSP_BIN)$(NC)"; if [ "$(Q)" = "@" ]; then python ./beken_packager_wrapper -c $(CFG_SOC_NAME_STR) -s $(CFG_FLASH_SELECTION_TYPE) > /dev/null; else python ./beken_packager_wrapper -c $(CFG_SOC_NAME_STR) -s $(CFG_FLASH_SELECTION_TYPE); fi)
 
 ifeq ("${CFG_SUPPORT_RTOS}", "4")
@@ -619,7 +632,7 @@ BKSDK_OUT_DIR = sdk_libs
 .PHONY: cp_libs
 bksdk: cp_libs
 
-cp_libs : $(BKSDK_LIB) $(WPA_LIB) $(RWNX_LIB) $(USB_LIB) $(SENSOR_LIB) $(BK_AWARE_LIB) $(BLE_LIB) $(BLE_PUB_LIB) $(CAL_LIB) $(SUPPLICANT_LIB) $(UART_DEBUG_LIB) $(RF_TEST_LIB) $(RF_USE_LIB) $(OS_LIB) $(LWIP_LIB) $(WOLFSSL_LIB) $(MBEDTLS_LIB) $(DRIVER_LIB) $(FUNC_LIB) $(MISC_LIB) $(SRC_S_LIB)
+cp_libs : $(BKSDK_LIB) $(WPA_LIB) $(RWNX_LIB) $(USB_LIB) $(SENSOR_LIB) $(BK_AWARE_LIB) $(BLE_LIB) $(BLE_PUB_LIB) $(CAL_LIB) $(SUPPLICANT_LIB) $(UART_DEBUG_LIB) $(RF_TEST_LIB) $(RF_USE_LIB) $(CODEC_HELIX_LIB) $(BK_PLAYER_LIB)  $(OS_LIB) $(LWIP_LIB) $(WOLFSSL_LIB) $(MBEDTLS_LIB) $(DRIVER_LIB) $(FUNC_LIB) $(MISC_LIB) $(SRC_S_LIB)
 	@echo "  $(GREEN)CP LIBS$(NC)"
 	$(Q)rm -rf $(BKSDK_OUT_DIR)
 	$(Q)mkdir $(BKSDK_OUT_DIR)
@@ -690,6 +703,18 @@ $(RF_TEST_LIB): $(OBJ_RF_TEST_LIST)
 rf_use: $(RF_USE_LIB)
 
 $(RF_USE_LIB): $(OBJ_RF_USE_LIST)
+	$(Q)$(ECHO) "  $(GREEN)AR   $@$(NC)"
+	$(Q)$(AR) -rcs $@ $^
+
+codec_helix: $(CODEC_HELIX_LIB)
+
+$(CODEC_HELIX_LIB): $(OBJ_CODEC_HELIX_LIST)
+	$(Q)$(ECHO) "  $(GREEN)AR   $@$(NC)"
+	$(Q)$(AR) -rcs $@ $^
+
+bk_player: $(BK_PLAYER_LIB)
+
+$(BK_PLAYER_LIB): $(OBJ_BK_PLAYER_LIST)
 	$(Q)$(ECHO) "  $(GREEN)AR   $@$(NC)"
 	$(Q)$(AR) -rcs $@ $^
 
@@ -781,7 +806,7 @@ clean:
 	$(Q)-rm -f build/$(SOC_BSP_LDS)
 	$(Q)-rm -f build/$(SOC_LDS)
 	$(Q)-rm -rf $(BLE_PUB_LIB) $(OS_LIB) $(LWIP_LIB) $(WOLFSSL_LIB) $(MBEDTLS_LIB) $(DRIVER_LIB) $(FUNC_LIB) $(MISC_LIB) $(SRC_S_LIB)
-	$(Q)if [ -e ./beken378/docs/build/html ]; then cd ./beken378/docs/ && make clean; fi
+	$(Q)if [ -e ./beken378/docs/build/ ]; then cd ./beken378/docs/ && make clean; fi
 ifeq  ("${CFG_SUPPORT_RTOS}", "4")
 	$(Q)-rm -rf build/libbk7231_sdk.a
 	$(Q)-rm -rf sdk_libs
@@ -793,7 +818,7 @@ endif
 
 .PHONY: cleanlib
 cleanlib:
-	$(Q)-rm -rf $(RWNX_LIB) $(WPA_LIB) $(USB_LIB) $(BLE_LIB) $(SENSOR_LIB) $(BK_AWARE_LIB) $(CAL_LIB) $(SUPPLICANT_LIB) $(UART_DEBUG_LIB) $(RF_TEST_LIB) $(RF_USE_LIB) $(BLE_PUB_LIB) $(OS_LIB) $(LWIP_LIB) $(WOLFSSL_LIB) $(MBEDTLS_LIB) $(DRIVER_LIB) $(FUNC_LIB) $(MISC_LIB) $(SRC_S_LIB)
+	$(Q)-rm -rf $(RWNX_LIB) $(WPA_LIB) $(USB_LIB) $(BLE_LIB) $(SENSOR_LIB) $(BK_AWARE_LIB) $(CAL_LIB) $(SUPPLICANT_LIB) $(UART_DEBUG_LIB) $(RF_TEST_LIB) $(RF_USE_LIB) $(CODEC_HELIX_LIB) $(BK_PLAYER_LIB) $(BLE_PUB_LIB) $(OS_LIB) $(LWIP_LIB) $(WOLFSSL_LIB) $(MBEDTLS_LIB) $(DRIVER_LIB) $(FUNC_LIB) $(MISC_LIB) $(SRC_S_LIB)
 	@$(ECHO) "$(GREEN)Done$(NC)"
 
 .PHONY: map

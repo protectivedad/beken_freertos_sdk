@@ -1,3 +1,17 @@
+// Copyright 2015-2024 Beken
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include "include.h"
 #include "rtos_pub.h"
 #include "los_config.h"
@@ -18,46 +32,46 @@
 *
 */
 typedef enum {
-  /** The thread is inactive. */
-  osThreadInactive        =  0,
-  /** The thread is ready. */
-  osThreadReady           =  1,
-  /** The thread is running. */
-  osThreadRunning         =  2,
-  /** The thread is blocked. */
-  osThreadBlocked         =  3,
-  /** The thread is terminated. */
-  osThreadTerminated      =  4,
-  /** The thread is abnormal. */
-  osThreadError           = -1,
-  /** Reserved */
-  osThreadReserved        = 0x7FFFFFFF
+    /** The thread is inactive. */
+    osThreadInactive        =  0,
+    /** The thread is ready. */
+    osThreadReady           =  1,
+    /** The thread is running. */
+    osThreadRunning         =  2,
+    /** The thread is blocked. */
+    osThreadBlocked         =  3,
+    /** The thread is terminated. */
+    osThreadTerminated      =  4,
+    /** The thread is abnormal. */
+    osThreadError           = -1,
+    /** Reserved */
+    osThreadReserved        = 0x7FFFFFFF
 } osThreadState_t;
-  
+
 #if (LOSCFG_BASE_CORE_SWTMR_ALIGN == 1)
-  /**
-  * @brief Enumerates timer permissions.
-  *
-  * @since 1.0
-  * @version 1.0
-  */
-  typedef enum	{
-	/** The timer is not allowed to wake up the RTOS. */
-	osTimerRousesIgnore 	  = 	0,
-	/** The timer is allowed to wake up the RTOS. */
-	osTimerRousesAllow		  = 	1
-  } osTimerRouses_t;
-  
-  /**
-  * @brief Enumerates timer alignment modes.
-  *
-  */
-  typedef enum	{
-	/** The timer ignores alignment. */
-	osTimerAlignIgnore		  = 	0,
-	/** The timer allows alignment. */
-	osTimerAlignAllow		  = 	1
-  } osTimerAlign_t;
+/**
+* @brief Enumerates timer permissions.
+*
+* @since 1.0
+* @version 1.0
+*/
+typedef enum	{
+    /** The timer is not allowed to wake up the RTOS. */
+    osTimerRousesIgnore 	  = 	0,
+    /** The timer is allowed to wake up the RTOS. */
+    osTimerRousesAllow		  = 	1
+} osTimerRouses_t;
+
+/**
+* @brief Enumerates timer alignment modes.
+*
+*/
+typedef enum	{
+    /** The timer ignores alignment. */
+    osTimerAlignIgnore		  = 	0,
+    /** The timer allows alignment. */
+    osTimerAlignAllow		  = 	1
+} osTimerAlign_t;
 #endif //(LOSCFG_BASE_CORE_SWTMR_ALIGN == 1)
 
 /******************************************************
@@ -69,26 +83,26 @@ beken_time_t beken_time_offset = 0;
 /******************************************************
  *               Function Definitions
  ******************************************************/
-OSStatus rtos_create_thread( beken_thread_t *thread, uint8_t priority, const char *name, 
-						beken_thread_function_t function, uint32_t stack_size, beken_thread_arg_t arg )
+OSStatus rtos_create_thread( beken_thread_t *thread, uint8_t priority, const char *name,
+                             beken_thread_function_t function, uint32_t stack_size, beken_thread_arg_t arg )
 {
     uint32_t uwTid;
     UINT32 uwRet = LOS_OK;
-	OSStatus ret;
+    OSStatus ret;
     LosTaskCB *pstTaskCB = NULL;
     TSK_INIT_PARAM_S stTskInitParam = {NULL};
     UINT16 usPriority;
 
-	ret = kNoErr;
+    ret = kNoErr;
     if (OS_INT_ACTIVE) {
         ret = kGeneralErr;
-		goto tinit_exit;
+        goto tinit_exit;
     }
 
     usPriority = priority;
     if (!ISVALID_LOS_PRIORITY(usPriority)) {
         ret = kUnsupportedErr;/* unsupported priority */
-		goto tinit_exit;
+        goto tinit_exit;
     }
 
     stTskInitParam.pfnTaskEntry = (TSK_ENTRY_FUNC)function;
@@ -98,27 +112,27 @@ OSStatus rtos_create_thread( beken_thread_t *thread, uint8_t priority, const cha
     stTskInitParam.usTaskPrio = usPriority;
 
     uwRet = LOS_TaskCreate((UINT32 *)&uwTid, &stTskInitParam);
-	if(LOS_OK != uwRet)
-	{
-		ret = kGeneralErr;
-		goto tinit_exit;
-	}
+    if(LOS_OK != uwRet)
+    {
+        ret = kGeneralErr;
+        goto tinit_exit;
+    }
     pstTaskCB = OS_TCB_FROM_TID(uwTid);
 
-	if(thread)
-	{
-		*thread = (beken_thread_t *)pstTaskCB;
-	}
+    if(thread)
+    {
+        *thread = (beken_thread_t *)pstTaskCB;
+    }
 
 tinit_exit:
-	ASSERT(LOS_OK == uwRet);
-	return ret;
+    ASSERT(LOS_OK == uwRet);
+    return ret;
 }
 
 OSStatus rtos_delete_thread(beken_thread_t *thread)
 {
     UINT32 uwRet;
-	uint32_t selfTid;
+    uint32_t selfTid;
     LosTaskCB *pstTaskCB = NULL;
 
     if (OS_INT_ACTIVE) {
@@ -129,29 +143,29 @@ OSStatus rtos_delete_thread(beken_thread_t *thread)
         return kParamErr;
     }
 
-	if(NULL == thread)
-	{
-	    selfTid = LOS_CurTaskIDGet();
-	    pstTaskCB = OS_TCB_FROM_TID(selfTid);
-	}
-	else
-	{
-	    pstTaskCB = (LosTaskCB *)*thread;
-	}
+    if(NULL == thread)
+    {
+        selfTid = LOS_CurTaskIDGet();
+        pstTaskCB = OS_TCB_FROM_TID(selfTid);
+    }
+    else
+    {
+        pstTaskCB = (LosTaskCB *)*thread;
+    }
 
     uwRet = LOS_TaskDelete(pstTaskCB->taskID);
 
     switch (uwRet) {
-        case LOS_ERRNO_TSK_OPERATE_IDLE:
-        case LOS_ERRNO_TSK_SUSPEND_SWTMR_NOT_ALLOWED:
-        case LOS_ERRNO_TSK_ID_INVALID:
-            return kParamErr;
+    case LOS_ERRNO_TSK_OPERATE_IDLE:
+    case LOS_ERRNO_TSK_SUSPEND_SWTMR_NOT_ALLOWED:
+    case LOS_ERRNO_TSK_ID_INVALID:
+        return kParamErr;
 
-        case LOS_ERRNO_TSK_NOT_CREATED:
-            return kNoResourcesErr;
+    case LOS_ERRNO_TSK_NOT_CREATED:
+        return kNoResourcesErr;
 
-        default:
-            return kNoErr;
+    default:
+        return kNoErr;
     }
 }
 
@@ -161,7 +175,7 @@ uint32_t _thread_get_status(beken_thread_t *thread)
     osThreadState_t stState;
     LosTaskCB *pstTaskCB = NULL;
 
-	ASSERT(thread);
+    ASSERT(thread);
     if (OS_INT_ACTIVE || *thread == NULL) {
         return osThreadError;
     }
@@ -174,7 +188,7 @@ uint32_t _thread_get_status(beken_thread_t *thread)
     } else if (taskStatus & OS_TASK_STATUS_READY) {
         stState = osThreadReady;
     } else if (taskStatus &
-        (OS_TASK_STATUS_DELAY | OS_TASK_STATUS_PEND | OS_TASK_STATUS_SUSPEND)) {
+               (OS_TASK_STATUS_DELAY | OS_TASK_STATUS_PEND | OS_TASK_STATUS_SUSPEND)) {
         stState = osThreadBlocked;
     } else if (taskStatus & OS_TASK_STATUS_UNUSED) {
         stState = osThreadInactive;
@@ -187,12 +201,12 @@ uint32_t _thread_get_status(beken_thread_t *thread)
 
 OSStatus rtos_thread_join(beken_thread_t *thread)
 {
-	ASSERT(thread);
+    ASSERT(thread);
     while ( _thread_get_status( *thread ) != osThreadInactive )
     {
         rtos_delay_milliseconds(10);
     }
-    
+
     return kNoErr;
 }
 
@@ -200,7 +214,7 @@ BOOL rtos_is_current_thread( beken_thread_t *thread )
 {
     uint32_t selfTid = LOS_CurTaskIDGet();
     LosTaskCB *tcb = OS_TCB_FROM_TID(selfTid);
-	
+
     if ( tcb == (LosTaskCB *)*thread )
     {
         return true;
@@ -215,7 +229,7 @@ beken_thread_t *rtos_get_current_thread(void)
 {
     uint32_t selfTid = LOS_CurTaskIDGet();
     LosTaskCB *tcb = OS_TCB_FROM_TID(selfTid);
-	
+
     return (beken_thread_t *)tcb;
 }
 
@@ -239,22 +253,22 @@ OSStatus rtos_thread_force_awake( beken_thread_t *thread )
 void rtos_thread_sleep(uint32_t seconds)
 {
     UINT32 uwRet = LOS_OK;
-	
-	uwRet = LOS_TaskDelay(seconds * LOS_TICKS_PER_SECOND);
-	(void)uwRet;
+
+    uwRet = LOS_TaskDelay(seconds * LOS_TICKS_PER_SECOND);
+    (void)uwRet;
 }
 
 void rtos_suspend_thread(beken_thread_t *thread)
 {
     UINT32 uwRet;
     LosTaskCB *pstTaskCB = NULL;
-	beken_thread_t bk_thread;
+    beken_thread_t bk_thread;
 
     if (OS_INT_ACTIVE) {
         return;
     }
 
-	bk_thread = *thread;
+    bk_thread = *thread;
     if (bk_thread == NULL) {
         bk_thread = rtos_get_current_thread();
     }
@@ -262,18 +276,18 @@ void rtos_suspend_thread(beken_thread_t *thread)
     pstTaskCB = (LosTaskCB *)bk_thread;
     uwRet = LOS_TaskSuspend(pstTaskCB->taskID);
     switch (uwRet) {
-        case LOS_ERRNO_TSK_OPERATE_IDLE:
-        case LOS_ERRNO_TSK_SUSPEND_SWTMR_NOT_ALLOWED:
-        case LOS_ERRNO_TSK_ID_INVALID:
-            return;
+    case LOS_ERRNO_TSK_OPERATE_IDLE:
+    case LOS_ERRNO_TSK_SUSPEND_SWTMR_NOT_ALLOWED:
+    case LOS_ERRNO_TSK_ID_INVALID:
+        return;
 
-        case LOS_ERRNO_TSK_NOT_CREATED:
-        case LOS_ERRNO_TSK_ALREADY_SUSPENDED:
-        case LOS_ERRNO_TSK_SUSPEND_LOCKED:
-            return;
+    case LOS_ERRNO_TSK_NOT_CREATED:
+    case LOS_ERRNO_TSK_ALREADY_SUSPENDED:
+    case LOS_ERRNO_TSK_SUSPEND_LOCKED:
+        return;
 
-        default:
-            return;
+    default:
+        return;
     }
 }
 
@@ -281,13 +295,13 @@ void rtos_resume_thread(beken_thread_t *thread)
 {
     UINT32 uwRet;
     LosTaskCB *pstTaskCB = NULL;
-	beken_thread_t bk_thread;
+    beken_thread_t bk_thread;
 
     if (OS_INT_ACTIVE) {
         return;
     }
 
-	bk_thread = *thread;
+    bk_thread = *thread;
     if (bk_thread == NULL) {
         bk_thread = rtos_get_current_thread();
     }
@@ -297,26 +311,26 @@ void rtos_resume_thread(beken_thread_t *thread)
     uwRet = LOS_TaskResume(pstTaskCB->taskID);
 
     switch (uwRet) {
-        case LOS_ERRNO_TSK_ID_INVALID:
-            return;
+    case LOS_ERRNO_TSK_ID_INVALID:
+        return;
 
-        case LOS_ERRNO_TSK_NOT_CREATED:
-        case LOS_ERRNO_TSK_NOT_SUSPENDED:
-            return;
+    case LOS_ERRNO_TSK_NOT_CREATED:
+    case LOS_ERRNO_TSK_NOT_SUSPENDED:
+        return;
 
-        default:
-            return;
+    default:
+        return;
     }
 }
 
 uint32_t rtos_get_tick_count(void)
 {
-	return (uint32_t)LOS_TickCountGet();
+    return (uint32_t)LOS_TickCountGet();
 }
 
 uint32_t beken_tick_ms(void)
 {
-	return ms_to_tick_ratio;
+    return ms_to_tick_ratio;
 }
 
 OSStatus beken_time_get_time(beken_time_t* time_ptr)
@@ -343,7 +357,7 @@ OSStatus rtos_init_semaphore_adv(beken_semaphore_t *semaphore, int max_count, in
 
     if (OS_INT_ACTIVE) {
         *semaphore = (beken_semaphore_t)NULL;
-		goto init_aexit;
+        goto init_aexit;
     }
 
     if (1 == max_count) {
@@ -351,7 +365,7 @@ OSStatus rtos_init_semaphore_adv(beken_semaphore_t *semaphore, int max_count, in
     } else {
         uwRet = LOS_SemCreate((UINT16)init_count, &uwSemId);
     }
-	ASSERT(LOS_OK == uwRet);
+    ASSERT(LOS_OK == uwRet);
 
     if (uwRet == LOS_OK) {
         *semaphore = (beken_semaphore_t)(GET_SEM(uwSemId));
@@ -368,11 +382,11 @@ OSStatus rtos_get_semaphore(beken_semaphore_t *semaphore, uint32_t timeout_ms )
     UINT32 uwRet;
     uint32_t timeout;
 
-	ASSERT(semaphore);
+    ASSERT(semaphore);
     if(timeout_ms == BEKEN_WAIT_FOREVER)
         timeout = LOS_WAIT_FOREVER;
     else
-        timeout = timeout_ms / ms_to_tick_ratio;     
+        timeout = timeout_ms / ms_to_tick_ratio;
 
     if (*semaphore == NULL) {
         return kParamErr;
@@ -393,7 +407,7 @@ OSStatus rtos_get_semaphore(beken_semaphore_t *semaphore, uint32_t timeout_ms )
         return kInProgressErr;
     } else {
         return kGeneralErr;
-    } 
+    }
 }
 
 int rtos_get_sema_count(beken_semaphore_t *semaphore )
@@ -405,7 +419,7 @@ int rtos_get_sema_count(beken_semaphore_t *semaphore )
         return 0;
     }
 
-	ASSERT(semaphore);
+    ASSERT(semaphore);
 
     if (*semaphore == NULL) {
         return 0;
@@ -422,7 +436,7 @@ int rtos_set_semaphore(beken_semaphore_t *semaphore )
 {
     UINT32 uwRet;
 
-	ASSERT(semaphore);
+    ASSERT(semaphore);
 
     if (*semaphore == NULL) {
         return kParamErr;
@@ -446,7 +460,7 @@ OSStatus rtos_deinit_semaphore(beken_semaphore_t *semaphore )
         return kGeneralErr;
     }
 
-	ASSERT(semaphore);
+    ASSERT(semaphore);
 
     if (*semaphore == NULL) {
         return kParamErr;
@@ -477,10 +491,10 @@ OSStatus rtos_init_mutex(beken_mutex_t *mutex)
 
     if (OS_INT_ACTIVE) {
         *mutex = NULL;
-		goto init_exit;
+        goto init_exit;
     }
 
-	ASSERT(mutex);
+    ASSERT(mutex);
 
     uwRet = LOS_MuxCreate(&uwMuxId);
     if (uwRet == LOS_OK) {
@@ -488,7 +502,7 @@ OSStatus rtos_init_mutex(beken_mutex_t *mutex)
     } else {
         *mutex = (beken_mutex_t)NULL;
     }
-	ASSERT(LOS_OK == uwRet);
+    ASSERT(LOS_OK == uwRet);
 
 init_exit:
     if ( *mutex == NULL )
@@ -507,7 +521,7 @@ OSStatus rtos_trylock_mutex(beken_mutex_t *mutex)
         return kParamErr;
     }
 
-	ASSERT(mutex);
+    ASSERT(mutex);
 
     uwRet = LOS_MuxPend(((LosMuxCB *)*mutex)->muxID, 0);
     if (uwRet == LOS_OK) {
@@ -525,7 +539,7 @@ OSStatus rtos_lock_mutex(beken_mutex_t *mutex)
 {
     UINT32 uwRet;
 
-	ASSERT(mutex);
+    ASSERT(mutex);
 
     if (*mutex == NULL) {
         return kParamErr;
@@ -551,7 +565,7 @@ OSStatus rtos_unlock_mutex(beken_mutex_t *mutex)
         return kParamErr;
     }
 
-	ASSERT(mutex);
+    ASSERT(mutex);
 
     uwRet = LOS_MuxPost(((LosMuxCB *)*mutex)->muxID);
     if (uwRet == LOS_OK) {
@@ -569,7 +583,7 @@ OSStatus rtos_deinit_mutex(beken_mutex_t *mutex)
         return kStateErr;
     }
 
-	ASSERT(mutex);
+    ASSERT(mutex);
 
     if (*mutex == NULL) {
         return kParamErr;
@@ -589,14 +603,14 @@ OSStatus rtos_init_queue( beken_queue_t *queue, const char* name, uint32_t msg_s
 {
     UINT32 uwRet;
     UINT32 uwQueueID;
-	OSStatus ret = kNoErr;
+    OSStatus ret = kNoErr;
 
-	ASSERT(queue);
+    ASSERT(queue);
 
     if (0 == msg_count || 0 == msg_size || OS_INT_ACTIVE) {
         *queue = (beken_queue_t)NULL;
-		ret = kParamErr;
-		goto qinit_exit;
+        ret = kParamErr;
+        goto qinit_exit;
     }
 
     uwRet = LOS_QueueCreate((char *)name, (UINT16)msg_count, &uwQueueID, 0, (UINT16)msg_size);
@@ -604,9 +618,9 @@ OSStatus rtos_init_queue( beken_queue_t *queue, const char* name, uint32_t msg_s
         *queue = (beken_queue_t)(GET_QUEUE_HANDLE(uwQueueID));
     } else {
         *queue = (beken_queue_t)NULL;
-		ret = kNoResourcesErr;
+        ret = kNoResourcesErr;
     }
-	ASSERT(LOS_OK == uwRet);
+    ASSERT(LOS_OK == uwRet);
 
 qinit_exit:
     return ret;
@@ -619,12 +633,12 @@ OSStatus rtos_push_to_queue( beken_queue_t *queue, void* msg_ptr, uint32_t timeo
     uint32_t uwBufferSize;
     LosQueueCB *pstQueue = (LosQueueCB *)*queue;
 
-	ASSERT(queue);
+    ASSERT(queue);
 
     if(timeout_ms == BEKEN_WAIT_FOREVER)
         timeout = LOS_WAIT_FOREVER;
     else
-        timeout = timeout_ms / ms_to_tick_ratio;    
+        timeout = timeout_ms / ms_to_tick_ratio;
 
     if (pstQueue == NULL || msg_ptr == NULL || ((OS_INT_ACTIVE) && (0 != timeout))) {
         return kParamErr;
@@ -652,12 +666,12 @@ OSStatus rtos_push_to_queue_front( beken_queue_t *queue, void *msg_ptr, uint32_t
     uint32_t uwBufferSize;
     LosQueueCB *pstQueue = (LosQueueCB *)*queue;
 
-	ASSERT(queue);
+    ASSERT(queue);
 
     if(timeout_ms == BEKEN_WAIT_FOREVER)
         timeout = LOS_WAIT_FOREVER;
     else
-        timeout = timeout_ms / ms_to_tick_ratio;    
+        timeout = timeout_ms / ms_to_tick_ratio;
 
     if (pstQueue == NULL || msg_ptr == NULL || ((OS_INT_ACTIVE) && (0 != timeout))) {
         return kParamErr;
@@ -685,12 +699,12 @@ OSStatus rtos_pop_from_queue( beken_queue_t *queue, void *msg_ptr, uint32_t time
     UINT32 uwBufferSize;
     LosQueueCB *pstQueue = (LosQueueCB *)*queue;
 
-	ASSERT(queue);
+    ASSERT(queue);
 
     if(timeout_ms == BEKEN_WAIT_FOREVER)
         timeout = LOS_WAIT_FOREVER;
     else
-        timeout = timeout_ms / ms_to_tick_ratio;    
+        timeout = timeout_ms / ms_to_tick_ratio;
 
     if (pstQueue == NULL || msg_ptr == NULL || ((OS_INT_ACTIVE) && (0 != timeout))) {
         return kParamErr;
@@ -714,7 +728,7 @@ OSStatus rtos_deinit_queue(beken_queue_t *queue)
     UINT32 uwRet;
     LosQueueCB *pstQueue = (LosQueueCB *)*queue;
 
-	ASSERT(queue);
+    ASSERT(queue);
 
     if (pstQueue == NULL) {
         return kParamErr;
@@ -754,7 +768,7 @@ uint32_t _queue_get_count(beken_queue_t *queue)
     UINTPTR uwIntSave;
     LosQueueCB *pstQueue = (LosQueueCB *)*queue;
 
-	ASSERT(queue);
+    ASSERT(queue);
 
     if (pstQueue == NULL) {
         count = 0U;
@@ -768,13 +782,13 @@ uint32_t _queue_get_count(beken_queue_t *queue)
 
 BOOL rtos_is_queue_full(beken_queue_t *queue)
 {
-	ASSERT(queue);
+    ASSERT(queue);
     return ( _queue_get_capacity(queue) == _queue_get_count(queue) ) ? true : false;
 }
 
 BOOL rtos_is_queue_empty(beken_queue_t *queue)
 {
-	ASSERT(queue);
+    ASSERT(queue);
     return ( 0 == _queue_get_count(queue) ) ? true : false;
 }
 
@@ -782,10 +796,10 @@ static void timer_callback2( void *handle )
 {
     beken2_timer_t *timer = (beken2_timer_t *) handle;
 
-	if(BEKEN_MAGIC_WORD != timer->beken_magic)
-	{
-		return;
-	}
+    if(BEKEN_MAGIC_WORD != timer->beken_magic)
+    {
+        return;
+    }
     if ( timer->function )
     {
         timer->function( timer->left_arg, timer->right_arg );
@@ -802,48 +816,48 @@ static void timer_callback1( void *handle )
     }
 }
 
-OSStatus rtos_init_oneshot_timer( beken2_timer_t *timer, 
-									uint32_t time_ms, 
-									timer_2handler_t func,
-									void* larg, 
-									void* rarg )
+OSStatus rtos_init_oneshot_timer( beken2_timer_t *timer,
+                                  uint32_t time_ms,
+                                  timer_2handler_t func,
+                                  void* larg,
+                                  void* rarg )
 {
     SWTMR_CTRL_S *pstSwtmr;
-	OSStatus ret = kNoErr;
+    OSStatus ret = kNoErr;
     UINT32 usSwTmrID;
     UINT8 mode;
 
-	timer->handle = NULL;
+    timer->handle = NULL;
     if (NULL == func) {
-		ret = kParamErr;
-		goto tinit_exit;
+        ret = kParamErr;
+        goto tinit_exit;
     }
 
     mode = LOS_SWTMR_MODE_NO_SELFDELETE;
-	timer->beken_magic = BEKEN_MAGIC_WORD;
-	timer->function = func;
-	timer->left_arg = larg;
-	timer->right_arg = rarg;
-	
-#if (LOSCFG_BASE_CORE_SWTMR_ALIGN == 1)
+    timer->beken_magic = BEKEN_MAGIC_WORD;
+    timer->function = func;
+    timer->left_arg = larg;
+    timer->right_arg = rarg;
+
+    #if (LOSCFG_BASE_CORE_SWTMR_ALIGN == 1)
     if (LOS_OK != LOS_SwtmrCreate(1, mode, (SWTMR_PROC_FUNC)timer_callback2, &usSwTmrID, (uint32_t)(UINTPTR)timer,
-        osTimerRousesAllow, osTimerAlignIgnore)) {
+                                  osTimerRousesAllow, osTimerAlignIgnore)) {
         ret = kGeneralErr;
-		goto tinit_exit;
+        goto tinit_exit;
     }
-#else
+    #else
     if (LOS_OK != LOS_SwtmrCreate(1, mode, (SWTMR_PROC_FUNC)func, &usSwTmrID, (uint32_t)(UINTPTR)larg)) {
         ret = kGeneralErr;
-		goto tinit_exit;
+        goto tinit_exit;
     }
-#endif
+    #endif
 
-	pstSwtmr = (SWTMR_CTRL_S *)OS_SWT_FROM_SID(usSwTmrID);
+    pstSwtmr = (SWTMR_CTRL_S *)OS_SWT_FROM_SID(usSwTmrID);
     timer->handle = (void *)pstSwtmr;
 
-	if(pstSwtmr){
-		pstSwtmr->uwInterval = time_ms / ms_to_tick_ratio;
-	}
+    if(pstSwtmr) {
+        pstSwtmr->uwInterval = time_ms / ms_to_tick_ratio;
+    }
 
 tinit_exit:
     return ret;
@@ -851,17 +865,17 @@ tinit_exit:
 
 OSStatus rtos_start_oneshot_timer(beken2_timer_t *timer)
 {
-	return rtos_start_timer((beken_timer_t *)timer);
+    return rtos_start_timer((beken_timer_t *)timer);
 }
 
 OSStatus rtos_deinit_oneshot_timer(beken2_timer_t *timer)
 {
-	timer->beken_magic = 0;
-	timer->left_arg = 0;
-	timer->right_arg = 0;
-	timer->function = NULL;
-	
-	return rtos_deinit_timer((beken_timer_t *)timer);
+    timer->beken_magic = 0;
+    timer->left_arg = 0;
+    timer->right_arg = 0;
+    timer->function = NULL;
+
+    return rtos_deinit_timer((beken_timer_t *)timer);
 }
 
 OSStatus rtos_stop_oneshot_timer(beken2_timer_t *timer)
@@ -885,55 +899,55 @@ OSStatus rtos_oneshot_reload_timer(beken2_timer_t *timer)
 }
 
 OSStatus rtos_oneshot_reload_timer_ex(beken2_timer_t *timer,
-										uint32_t time_ms,
-										timer_2handler_t function,
-										void *larg,
-										void *rarg)
+                                      uint32_t time_ms,
+                                      timer_2handler_t function,
+                                      void *larg,
+                                      void *rarg)
 {
-	return kUnsupportedErr;
+    return kUnsupportedErr;
 }
 
-OSStatus rtos_init_timer(beken_timer_t *timer, 
-									uint32_t time_ms, 
-									timer_handler_t func, 
-									void* argument )
+OSStatus rtos_init_timer(beken_timer_t *timer,
+                         uint32_t time_ms,
+                         timer_handler_t func,
+                         void* argument )
 {
     SWTMR_CTRL_S *pstSwtmr;
-	OSStatus ret = kNoErr;
+    OSStatus ret = kNoErr;
     UINT32 usSwTmrID;
     UINT8 mode;
 
-	timer->handle = NULL;
-	
+    timer->handle = NULL;
+
     if (NULL == func) {
-		ret = kParamErr;
-		goto tinit_exit;
+        ret = kParamErr;
+        goto tinit_exit;
     }
 
     mode = LOS_SWTMR_MODE_PERIOD;
-	timer->function = func;
-	timer->arg = argument;
-	
-#if (LOSCFG_BASE_CORE_SWTMR_ALIGN == 1)
+    timer->function = func;
+    timer->arg = argument;
+
+    #if (LOSCFG_BASE_CORE_SWTMR_ALIGN == 1)
     if (LOS_OK != LOS_SwtmrCreate(1, mode, (SWTMR_PROC_FUNC)timer_callback1, &usSwTmrID, (uint32_t)(UINTPTR)timer,
-        osTimerRousesAllow, osTimerAlignIgnore)) {
-		ret = kGeneralErr;
-		goto tinit_exit;
+                                  osTimerRousesAllow, osTimerAlignIgnore)) {
+        ret = kGeneralErr;
+        goto tinit_exit;
     }
-#else
+    #else
     if (LOS_OK != LOS_SwtmrCreate(1, mode, (SWTMR_PROC_FUNC)timer_callback1, &usSwTmrID, (uint32_t)(UINTPTR)timer)) {
-		ret = kGeneralErr;
-		goto tinit_exit;
+        ret = kGeneralErr;
+        goto tinit_exit;
     }
-#endif
+    #endif
 
     timer->handle = (void *)OS_SWT_FROM_SID(usSwTmrID);
-	pstSwtmr = (SWTMR_CTRL_S *)timer->handle;
+    pstSwtmr = (SWTMR_CTRL_S *)timer->handle;
 
 
-	if(pstSwtmr){
-		pstSwtmr->uwInterval = time_ms / ms_to_tick_ratio;
-	}
+    if(pstSwtmr) {
+        pstSwtmr->uwInterval = time_ms / ms_to_tick_ratio;
+    }
 
 tinit_exit:
     return ret;
@@ -970,7 +984,7 @@ OSStatus rtos_stop_timer(beken_timer_t *timer)
         return kParamErr;
     }
 
-	pstSwtmr = (SWTMR_CTRL_S *)timer->handle;
+    pstSwtmr = (SWTMR_CTRL_S *)timer->handle;
     uwRet = LOS_SwtmrStop(pstSwtmr->usTimerID);
     if (LOS_OK == uwRet) {
         return kNoErr;
@@ -989,13 +1003,13 @@ OSStatus rtos_reload_timer(beken_timer_t *timer)
 OSStatus rtos_change_period(beken_timer_t *timer, uint32_t time_ms)
 {
     UINT32 uwRet;
-	UINTPTR intSave;
+    UINTPTR intSave;
     SWTMR_CTRL_S *pstSwtmr;
-	
+
     if (NULL == timer) {
         return kParamErr;
     }
-	rtos_stop_timer(timer);
+    rtos_stop_timer(timer);
 
     intSave = LOS_IntLock();
     pstSwtmr = (SWTMR_CTRL_S *)timer->handle;
@@ -1016,16 +1030,16 @@ OSStatus rtos_deinit_timer(beken_timer_t *timer)
     UINT32 uwRet;
     SWTMR_CTRL_S *pstSwtmr;
 
-	pstSwtmr = (SWTMR_CTRL_S *)timer->handle;
+    pstSwtmr = (SWTMR_CTRL_S *)timer->handle;
     if (NULL == pstSwtmr) {
         return kParamErr;
     }
 
     uwRet = LOS_SwtmrDelete(pstSwtmr->usTimerID);
     if (LOS_OK == uwRet) {
-		timer->handle = NULL;
-		timer->arg = 0;
-		timer->function = NULL;
+        timer->handle = NULL;
+        timer->arg = 0;
+        timer->function = NULL;
         return kNoErr;
     } else if (LOS_ERRNO_SWTMR_ID_INVALID == uwRet) {
         return kParamErr;
@@ -1036,15 +1050,15 @@ OSStatus rtos_deinit_timer(beken_timer_t *timer)
 
 uint32_t rtos_get_timer_expiry_time(beken_timer_t *timer)
 {
-	uint32_t val;
+    uint32_t val;
     UINTPTR intSave;
     SWTMR_CTRL_S *pstSwtmr;
 
-	intSave = LOS_IntLock();
+    intSave = LOS_IntLock();
     pstSwtmr = (SWTMR_CTRL_S *)timer->handle;
     val = pstSwtmr->uwInterval;
     LOS_IntRestore(intSave);
-	
+
     return val;
 }
 
@@ -1075,7 +1089,7 @@ BOOL rtos_is_timer_running(beken_timer_t *timer)
 OSStatus rtos_init_event_flags( beken_event_flags_t* event_flags )
 {
     UNUSED_PARAMETER( event_flags );
-	
+
     return kUnsupportedErr;
 }
 
@@ -1095,14 +1109,14 @@ OSStatus rtos_set_event_flags( beken_event_flags_t* event_flags, uint32_t flags_
 {
     UNUSED_PARAMETER( event_flags );
     UNUSED_PARAMETER( flags_to_set );
-	
+
     return kUnsupportedErr;
 }
 
 OSStatus rtos_deinit_event_flags( beken_event_flags_t* event_flags )
 {
     UNUSED_PARAMETER( event_flags );
-	
+
     return kUnsupportedErr;
 }
 
@@ -1146,24 +1160,24 @@ OSStatus rtos_delay_milliseconds( uint32_t num_ms )
 /*-----------------------------------------------------------*/
 void *beken_malloc( size_t xWantedSize )
 {
-	return (void *)LOS_MemAlloc(m_aucSysMem0, xWantedSize);;
+    return (void *)LOS_MemAlloc(m_aucSysMem0, xWantedSize);;
 }
 
 /*-----------------------------------------------------------*/
 void beken_free( void *pv )
 {
-	LOS_MemFree(m_aucSysMem0, pv);
+    LOS_MemFree(m_aucSysMem0, pv);
 }
 
 /*-----------------------------------------------------------*/
 void *beken_realloc( void *pv, size_t xWantedSize )
 {
-	return LOS_MemRealloc(m_aucSysMem0, pv, xWantedSize);
+    return LOS_MemRealloc(m_aucSysMem0, pv, xWantedSize);
 }
 
 void rtos_dump_all_thread(void)
 {
-	//To be completed
+    //To be completed
 }
 
 void rtos_dump_stack(beken_thread_t *task)

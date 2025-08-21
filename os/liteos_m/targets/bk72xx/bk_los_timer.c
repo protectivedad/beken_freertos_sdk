@@ -1,3 +1,17 @@
+// Copyright 2015-2024 Beken
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include "include.h"
 #include "bk_los_timer.h"
 #include "bk_timer.h"
@@ -17,21 +31,21 @@ void HalTickHandler(u8 param)
 
 unsigned int HalTickStart(OS_TICK_HANDLER handler)
 {
-	unsigned int intSave;
-	UINT32 timer_channel;
+    unsigned int intSave;
+    UINT32 timer_channel;
 
-	intSave = LOS_IntLock();
-	timer_param_t param;
-	param.channel = LOS_TICK_TIMER_ID;
-	param.div = 1;
-	param.period = LOS_TICK_MS;
-	param.t_Int_Handler= HalTickHandler;
-	g_tickHandler = handler;
+    intSave = LOS_IntLock();
+    timer_param_t param;
+    param.channel = LOS_TICK_TIMER_ID;
+    param.div = 1;
+    param.period = LOS_TICK_MS;
+    param.t_Int_Handler= HalTickHandler;
+    g_tickHandler = handler;
 
-	bk_timer_ctrl( CMD_TIMER_INIT_PARAM, &param);
-	timer_channel = param.channel;
-	bk_timer_ctrl( CMD_TIMER_UNIT_ENABLE, &timer_channel);
-	LOS_IntRestore(intSave);
+    bk_timer_ctrl( CMD_TIMER_INIT_PARAM, &param);
+    timer_channel = param.channel;
+    bk_timer_ctrl( CMD_TIMER_UNIT_ENABLE, &timer_channel);
+    LOS_IntRestore(intSave);
 
     return 0;
 }
@@ -59,15 +73,15 @@ static void HalClockIrqClear(void)
 
 void HalSysTickReload(unsigned long long nextResponseTime)
 {
-	UINT32 inSave;
+    UINT32 inSave;
 
-	inSave = HalIntLock();
+    inSave = HalIntLock();
     HalTickLock();
-	
-	HalClockIrqClear();
+
+    HalClockIrqClear();
     REG_WRITE(REG_TIMERCTL_PERIOD_ADDR(LOS_TICK_TIMER_GROUP, LOS_TICK_TIMER_ID), nextResponseTime);
     HalTickUnlock();
-	HalIntRestore(inSave);
+    HalIntRestore(inSave);
 }
 
 unsigned long long HalGetTickCycle(unsigned int *period)
@@ -80,10 +94,10 @@ unsigned long long HalGetTickCycle(unsigned int *period)
     //get val
     REG_WRITE(LOS_TICK_RD_CTRL_REG, (LOS_TICK_TIMER_RD_ID << 2) | 1);
     while (REG_READ(LOS_TICK_RD_CTRL_REG) & 1) {
-         i_time_out++;
-         if (i_time_out > (120 * 1000)) {
-             break;
-         }
+        i_time_out++;
+        if (i_time_out > (120 * 1000)) {
+            break;
+        }
     }
 
     if (i_time_out <= (120 * 1000)) {
@@ -95,7 +109,7 @@ unsigned long long HalGetTickCycle(unsigned int *period)
 
 UINT64 OsGetCurrSecond(VOID)
 {
-	return rtos_get_tick_count() * LOS_TICK_MS / 1000;
+    return rtos_get_tick_count() * LOS_TICK_MS / 1000;
 }
 // eof
 

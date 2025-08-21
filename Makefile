@@ -1,4 +1,10 @@
 export OS := $(shell uname)
+export SDK_TOOLCHAIN_VERSION := 10.3.1
+export SDK_TOOLCHAIN := $(shell $(FREERTOS_EXEC_PATH)arm-none-eabi-gcc -dumpversion)
+
+ifneq ($(SDK_TOOLCHAIN), $(SDK_TOOLCHAIN_VERSION))
+$(error please update toolchain version to $(SDK_TOOLCHAIN_VERSION))
+endif
 
 GREEN := 
 RED := 
@@ -115,6 +121,14 @@ rf_test:
 .PHONY: rf_use
 rf_use: 
 	@$(MAKE) -f application.mk rf_use
+
+.PHONY: codec_helix
+codec_helix: 
+	@$(MAKE) -f application.mk codec_helix
+
+.PHONY: bk_player
+bk_player: 
+	@$(MAKE) -f application.mk bk_player
 
 .PHONY: clean
 clean:
