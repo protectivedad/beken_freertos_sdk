@@ -3094,15 +3094,15 @@ void sctrl_enter_rtos_idle_sleep(PS_DEEP_CTRL_PARAM deep_param)
     reg = 0xFFFFFFFF;
     REG_WRITE(SCTRL_GPIO_WAKEUP_INT_STATUS,reg);
 
-    if(deep_param.deep_wkway == PS_DEEP_WAKEUP_RTC
-            && deep_param.param != 0xffffffff)
+    if(deep_param.wake_up_way == PS_DEEP_WAKEUP_RTC
+            && deep_param.sleep_time != 0xffffffff)
     {
         reg = REG_READ(SCTRL_ROSC_TIMER);
         reg |= ROSC_TIMER_INT_STATUS_BIT;
         REG_WRITE(SCTRL_ROSC_TIMER,reg);
         reg = REG_READ(SCTRL_ROSC_TIMER);
         reg &= ~(ROSC_TIMER_PERIOD_MASK << ROSC_TIMER_PERIOD_POSI);
-        reg |= (deep_param.param << ROSC_TIMER_PERIOD_POSI);
+        reg |= (deep_param.sleep_time << ROSC_TIMER_PERIOD_POSI);
         REG_WRITE(SCTRL_ROSC_TIMER,reg);
         reg = REG_READ(SCTRL_ROSC_TIMER);
         reg |= ROSC_TIMER_ENABLE_BIT;
@@ -3118,13 +3118,13 @@ void sctrl_enter_rtos_idle_sleep(PS_DEEP_CTRL_PARAM deep_param)
         reg |= (0x1 << 8);
         REG_WRITE(SCTRL_BLOCK_EN_MUX, reg);
     }
-    else if(deep_param.deep_wkway == PS_DEEP_WAKEUP_GPIO)
+    else if(deep_param.wake_up_way == PS_DEEP_WAKEUP_GPIO)
     {
         reg = 0xFFFFFFFF;
         REG_WRITE(SCTRL_GPIO_WAKEUP_INT_STATUS,reg);
-        reg = deep_param.gpio_lv;
+        reg = deep_param.gpio_edge_map;
         REG_WRITE(SCTRL_GPIO_WAKEUP_TYPE,reg);
-        reg = deep_param.param;
+        reg = deep_param.gpio_index_map;
         REG_WRITE(SCTRL_GPIO_WAKEUP_EN,reg);
 
     }

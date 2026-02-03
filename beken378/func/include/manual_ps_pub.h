@@ -78,7 +78,7 @@ typedef enum {
     MANUAL_MODE_IDLE = 1,
 } MANUAL_MODE;
 
-#define     PS_SUPPORT_MANUAL_SLEEP     0
+#define     PS_SUPPORT_MANUAL_SLEEP     1
 typedef void ( *ps_wakeup_cb ) ( void );
 extern void deep_sleep_wakeup_with_gpio ( UINT32 gpio_index_map, UINT32 gpio_edge_map );
 extern void bk_enter_deep_sleep_mode ( PS_DEEP_CTRL_PARAM *deep_param );

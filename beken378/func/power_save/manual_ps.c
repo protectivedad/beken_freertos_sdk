@@ -197,21 +197,21 @@ void idle_sleep_wakeup_with_timer ( UINT32 sleep_time )
 
     if ( sleep_time != 0xffffffff ) {
         os_printf ( "idle sleep with rtc,%d ms\r\n", sleep_time );
-        deep_param.param = ( ( sleep_time * 102400 ) / 3125 ) ;
+        deep_param.sleep_time = ( ( sleep_time * 102400 ) / 3125 ) ;
 
-        if ( deep_param.param > 0xffff ) //only 16 bit
-            deep_param.param = 0xffff;
-        else if ( deep_param.param < 32 )
-            deep_param.param = 32;
+        if ( deep_param.sleep_time > 0xffff ) //only 16 bit
+            deep_param.sleep_time = 0xffff;
+        else if ( deep_param.sleep_time < 32 )
+            deep_param.sleep_time = 32;
     }
     else {
         os_printf ( "idle sleep forever\r\n" );
-        deep_param.param = 0xffffffff;
+        deep_param.sleep_time = 0xffffffff;
     }
 
     param = LPO_SELECT_ROSC;
     sddev_control ( SCTRL_DEV_NAME, CMD_SCTRL_SET_LOW_PWR_CLK, &param );
-    deep_param.deep_wkway = PS_DEEP_WAKEUP_RTC;
+    deep_param.wake_up_way = PS_DEEP_WAKEUP_RTC;
     os_printf ( "enter rtc ps\r\n" );
     GLOBAL_INT_DECLARATION();
     GLOBAL_INT_DISABLE();
@@ -259,9 +259,9 @@ void idle_sleep_wakeup_with_gpio ( UINT32 gpio_index_map, UINT32 gpio_edge_map )
     ps_pwm0_disable();
     uart_wait_tx_over();
     wifi_mac_state_set_idle();
-    deep_param.deep_wkway = PS_DEEP_WAKEUP_GPIO;
-    deep_param.param = gpio_index_map;
-    deep_param.gpio_lv = gpio_edge_map;
+    deep_param.wake_up_way = PS_DEEP_WAKEUP_GPIO;
+    deep_param.sleep_time = gpio_index_map;
+    deep_param.gpio_edge_map = gpio_edge_map;
     sddev_control ( SCTRL_DEV_NAME, CMD_SCTRL_RTOS_IDLE_SLEEP, &deep_param );
     delay ( 5 );
     sddev_control ( SCTRL_DEV_NAME, CMD_SCTRL_RTOS_IDLE_WAKEUP, 0 );
