@@ -14,7 +14,7 @@ ECHO = echo -e
 else
 ECHO = echo
 endif
-ROOT_DIR := $(shell pwd)
+ROOT_DIR := ./
 endif
 export ROOT_DIR
 
@@ -29,8 +29,8 @@ endef
 	@touch .config
 else ifeq ($(findstring CYGWIN, $(OS)), CYGWIN) 
 define update_sys_config_if_needed
-	tools/scripts/generate_sys_config.bat $(1)
-	tools/scripts/pick_beken_libs.bat $(1)
+	tools/scripts/generate_sys_config.sh $(1)
+	tools/scripts/pick_beken_libs.sh $(1)
 endef
 
 .config: config/sys_config.h

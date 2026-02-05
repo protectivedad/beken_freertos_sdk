@@ -80,7 +80,7 @@ doit()
     } >/dev/null 2>&1
 
     make clean >/dev/null
-    CC=arm-none-eabi-gcc AR=arm-none-eabi-ar LD=arm-none-eabi-ld \
+    CC=arm-none-eabi-gcc AR=arm-none-eabi-gcc-ar LD=arm-none-eabi-ld \
         CFLAGS="$ARMGCC_FLAGS" make lib >/dev/null
 
     OUT="size-${NAME}.txt"

@@ -188,8 +188,8 @@ out_json = json.dumps(out_json, sort_keys=True, indent=4)
 with open(str(out_path), "w") as f:
     f.write(out_json)
 
-if os.name == 'nt':
-    os.system("beken_packager {}".format(out_path))
+if sys.platform == 'cygwin':
+    os.system("./beken_packager.exe {}".format(out_path))
 else:
     os.system("./beken_packager {}".format(out_path))
 #copy all_2M.1220.bin as default for tools/script/build_include.sh

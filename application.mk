@@ -27,7 +27,9 @@ ENCRYPT_ARGS =
 ifeq ($(findstring MINGW32_NT, $(OS)), MINGW32_NT) 
 ENCRYPT = "./tools/crc_binary/encrypt.exe"
 else ifeq ($(findstring CYGWIN, $(OS)), CYGWIN) 
-ENCRYPT = "./tools/crc_binary/encrypt.exe"
+AR = $(CROSS_COMPILE)gcc-ar
+NM = $(CROSS_COMPILE)gcc-nm
+ENCRYPT = "./tools/crc_binary/encrypt_n.exe"
 else ifeq ($(findstring Darwin, $(OS)), Darwin) 
 ENCRYPT = "./tools/crc_binary/encrypt.darwin"
 ENCRYPT_ARGS = 0 0 0 0
