@@ -91,7 +91,7 @@
 #define CFG_RC_STATS                               1
 #endif
 
-#define CFG_ROLE_LAUNCH                            0
+#define CFG_ROLE_LAUNCH                            1
 #define CFG_USE_WPA_29                             1
 #define CFG_WPA_CTRL_IFACE                         1
 #define CFG_RWNX_QOS_MSDU                          1
@@ -300,7 +300,7 @@
 #define CFG_USE_DHCPD                              1 // for servicers in ap mode
 
 /*section 11-----temperature detect*/
-#define CFG_USE_TEMPERATURE_DETECT                 1
+#define CFG_USE_TEMPERATURE_DETECT                 0
 #define CFG_USE_VOLTAGE_DETECT                     0
 
 /*section 12-----for SPIDMA interface*/
@@ -320,7 +320,7 @@
 #define CFG_USE_MCU_PS                             1
 
 #define CFG_USE_DEEP_PS                            1
-#define CFG_USE_BLE_PS                             1
+#define CFG_USE_BLE_PS                             0
 #define CFG_USE_AP_IDLE                            1
 #define CFG_USE_FAKERTC_PS                         0
 #define CFG_LOW_VOLTAGE_PS                         0
@@ -361,7 +361,7 @@
 /*section 25 ----- use tick time calibrate*/
 #define CFG_USE_TICK_CAL                           1
 
-#define CFG_SUPPORT_BLE                            1
+#define CFG_SUPPORT_BLE                            0
 #define CFG_BLE_USE_CLI                            0
 #define CFG_SUPPORT_BLE_MESH                       0
 #define CFG_USE_PTA                                0

@@ -619,7 +619,7 @@ LIBFLAGS += -L./beken378/lib -lrf_test
 LIBFLAGS += -L./beken378/lib -lrf_use
 LIBFLAGS += -L./beken378/lib -lbk_player
 LIBFLAGS += -L./beken378/lib -lcodec_helix
-LIBFLAGS += -L./ -lble_pub
+#LIBFLAGS += -L./ -lble_pub
 #LIBFLAGS += -L./ -lwolfssl
 LIBFLAGS += -L./ -los -llwip -lmbedtls -ldriver -lfunc -lmisc -lsrc_s
 
