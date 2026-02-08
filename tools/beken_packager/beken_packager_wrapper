@@ -176,8 +176,8 @@ else:
     out_json = out_json_2M
     boot_json = "partition_2M.json"
 
-if os.name == 'nt':
-    cmd_str = "..\\rt_partition_tool\\rt_partition_tool_cli.exe " + bootloader_str +  boot_json
+if sys.platform == 'cygwin':
+    cmd_str = "../rt_partition_tool/rt_partition_tool_cli.exe " + bootloader_str +  boot_json
 else:
     cmd_str = "../rt_partition_tool/rt_partition_tool_cli " + bootloader_str + boot_json
 #print(cmd_str)
@@ -209,8 +209,8 @@ if("bin" in firmware_str) :
     firmware_rbl = firmware_str.replace(".bin", ".rbl")
 else:
     firmware_rbl = firmware_str + ".rbl"
-if os.name == 'nt':
-    ota_pack_cmd = "..\\rtt_ota\\rt_ota_packaging_tool_cli.exe -f " + firmware_str
+if sys.platform == 'cygwin':
+    ota_pack_cmd = "../rtt_ota/rt_ota_packaging_tool_cli.exe -f " + firmware_str
 else:
     ota_pack_cmd = "../rtt_ota/rt_ota_packaging_tool_cli-x86 -f " + firmware_str
 ota_pack_cmd = ota_pack_cmd + " -v " + out_json["section"][0]["version"]
@@ -235,8 +235,8 @@ with open("partition.json", 'r') as file:
         if(firmware_size > app_size) :
             raise ValueError("\033[31m firmware size:{} larger than app size:{}\033[0m".format(firmware_size, app_size))
 
-if os.name == 'nt':
-    os.system("beken_packager {}".format(out_path))
+if sys.platform == 'cygwin':
+    os.system("./beken_packager.exe {}".format(out_path))
 else:
     os.system("./beken_packager {}".format(out_path))
 #copy all_2M.1220.bin as default for tools/script/build_include.sh
