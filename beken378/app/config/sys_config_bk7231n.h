@@ -446,7 +446,7 @@
 
 #define AT_SERVICE_CFG                             0
 
-#define CFG_USE_FORCE_LOWVOL_PS                    1
+#define CFG_USE_FORCE_LOWVOL_PS                    0
 
 #define CFG_BK_NX_GET_WIFI_SNR                     0
 
