@@ -95,9 +95,9 @@
 #define CFG_USE_WPA_29                             1
 #define CFG_WPA_CTRL_IFACE                         1
 #define CFG_RWNX_QOS_MSDU                          1
-#define CFG_WLAN_FAST_CONNECT                      0
+#define CFG_WLAN_FAST_CONNECT                      1
 #if CFG_WLAN_FAST_CONNECT
-#define CFG_WLAN_FAST_CONNECT_STATIC_IP            0
+#define CFG_WLAN_FAST_CONNECT_STATIC_IP            1
 #define CFG_WLAN_SUPPORT_FAST_DHCP                 0
 #if (CFG_WLAN_FAST_CONNECT_STATIC_IP && CFG_WLAN_SUPPORT_FAST_DHCP)
 #error "static ip support and fast dhcp support cannot be opened at the same time"
@@ -125,7 +125,7 @@
 /* Send deauth before sending auth to AP */
 #define CFG_WIFI_DEAUTH_BEFORE_AUTH                0
 /* Connection retry support*/
-#define CFG_STA_AUTO_RECONNECT                     0
+#define CFG_STA_AUTO_RECONNECT                     1
 
 /*Use macro to shut down some unused functions*/
 #define CFG_WPA_MAYBE_UNUSED                       1
@@ -188,9 +188,9 @@
 #define CFG_EASY_FLASH                             0
 #define CFG_FLASH_BYPASS_OTP                       0
 #define CFG_AP_SUPPORT_HT_IE                       0
-#define CFG_SUPPORT_BSSID_CONNECT                  0
+#define CFG_SUPPORT_BSSID_CONNECT                  1
 #if CFG_SUPPORT_BSSID_CONNECT
-#define CFG_BSSID_FAST_CONNECT                     0
+#define CFG_BSSID_FAST_CONNECT                     1
 #endif
 #define CFG_USE_CONV_UTF8                          0
 #define CFG_BK_AWARE                               0
