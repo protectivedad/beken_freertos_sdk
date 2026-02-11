@@ -202,10 +202,10 @@ extern void tls_mbedtls_mem_free(void *ptr);
 
 #include "mbedtls/check_config.h"
 
-#define tls_malloc  os_malloc
-#define tls_free    os_free
-#define tls_realloc os_realloc
-#define tls_calloc  os_calloc
+// #define tls_malloc  os_malloc
+// #define tls_free    os_free
+// #define tls_realloc os_realloc
+// #define tls_calloc  os_calloc
 
 #else  /////
 

@@ -338,13 +338,14 @@ INCLUDES += -I$(ROOT_DIR)/beken378/driver/usb/src/uvc
 
 ifeq ("${CFG_MBEDTLS}", "1")
 #CFG_DEFINE_INCLUDE += MBEDTLS_CONFIG_FILE=\"tls_config.h\"
-ifeq ($(CFG_SUPPORT_MATTER), 1)
+# ifeq ($(CFG_SUPPORT_MATTER), 1)
 INCLUDES += -I$(ROOT_DIR)/beken378/func/mbedtls/mbedtls-2.27.0/include
-else
-INCLUDES += -I$(ROOT_DIR)/beken378/func/mbedtls/mbedtls/include
-INCLUDES += -I$(ROOT_DIR)/beken378/func/mbedtls/mbedtls/include/mbedtls
-INCLUDES += -I$(ROOT_DIR)/beken378/func/mbedtls/mbedtls_ui/
-endif
+INCLUDES += -I$(ROOT_DIR)/beken378/func/mbedtls/mbedtls-2.27.0/library
+# else
+# INCLUDES += -I$(ROOT_DIR)/beken378/func/mbedtls/mbedtls/include
+# INCLUDES += -I$(ROOT_DIR)/beken378/func/mbedtls/mbedtls/include/mbedtls
+# INCLUDES += -I$(ROOT_DIR)/beken378/func/mbedtls/mbedtls_ui/
+# endif
 INCLUDES += -I$(ROOT_DIR)/beken378/func/mbedtls/mbedtls-port/inc
 endif
 
@@ -584,6 +585,12 @@ SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/apps/http/httpd.c
 SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/apps/http/fs.c
 endif
 SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/apps/mqtt/mqtt.c
+# for MQTTS
+SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/apps/altcp_tls/altcp_tls_mbedtls.c
+SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/apps/altcp_tls/altcp_tls_mbedtls_mem.c
+SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/core/altcp.c
+SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/core/altcp_tcp.c
+SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/core/altcp_alloc.c
 
 SRC_FUNC_C += ./beken378/func/misc/fake_clock.c
 SRC_FUNC_C += ./beken378/func/misc/pseudo_random.c
@@ -794,89 +801,89 @@ ifeq ("${CFG_MBEDTLS}", "1")
 
 SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/tls_hardware.c
 SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/tls_mem.c
-ifeq ($(CFG_SUPPORT_MATTER), 1)
+# ifeq ($(CFG_SUPPORT_MATTER), 1)
 MBEDTLS_LIB_DIRS += ./beken378/func/mbedtls/mbedtls-2.27.0/library
 SRC_MBEDTLS_C += $(foreach dir, $(MBEDTLS_LIB_DIRS), $(wildcard $(dir)/*.c))
-else
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/ecp_curves_alt.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/ecp_alt.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/timing_alt.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/tls_certificate.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/tls_client.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/tls_net.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/aes.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/aesni.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/arc4.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/asn1parse.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/asn1write.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/base64.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/bignum.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/blowfish.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/camellia.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ccm.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/certs.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/cipher.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/cipher_wrap.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/cmac.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ctr_drbg.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/debug.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/des.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/dhm.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ecdh.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ecdsa.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ecjpake.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ecp.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ecp_curves.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/entropy.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/entropy_poll.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/error.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/gcm.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/havege.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/hmac_drbg.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/md.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/md_wrap.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/md2.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/md4.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/md5.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/memory_buffer_alloc.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/net_sockets.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/oid.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/padlock.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pem.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pk.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pk_wrap.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pkcs5.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pkcs11.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pkcs12.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pkparse.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pkwrite.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/platform.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ripemd160.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/rsa.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/sha1.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/sha256.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/sha512.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ssl_cache.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ssl_ciphersuites.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ssl_cli.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ssl_cookie.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ssl_srv.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ssl_ticket.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ssl_tls.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/threading.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/timing.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/version.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/version_features.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/x509.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/x509_create.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/x509_crl.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/x509_crt.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/x509_csr.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/x509write_crt.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/x509write_csr.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/xtea.c
-SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls_ui/sl_tls.c
-endif
+# else
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/ecp_curves_alt.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/ecp_alt.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/timing_alt.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/tls_certificate.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/tls_client.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/tls_net.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/aes.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/aesni.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/arc4.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/asn1parse.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/asn1write.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/base64.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/bignum.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/blowfish.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/camellia.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ccm.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/certs.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/cipher.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/cipher_wrap.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/cmac.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ctr_drbg.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/debug.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/des.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/dhm.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ecdh.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ecdsa.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ecjpake.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ecp.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ecp_curves.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/entropy.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/entropy_poll.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/error.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/gcm.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/havege.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/hmac_drbg.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/md.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/md_wrap.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/md2.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/md4.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/md5.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/memory_buffer_alloc.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/net_sockets.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/oid.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/padlock.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pem.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pk.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pk_wrap.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pkcs5.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pkcs11.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pkcs12.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pkparse.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/pkwrite.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/platform.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ripemd160.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/rsa.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/sha1.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/sha256.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/sha512.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ssl_cache.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ssl_ciphersuites.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ssl_cli.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ssl_cookie.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ssl_srv.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ssl_ticket.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/ssl_tls.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/threading.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/timing.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/version.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/version_features.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/x509.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/x509_create.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/x509_crl.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/x509_crt.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/x509_csr.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/x509write_crt.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/x509write_csr.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls/library/xtea.c
+# SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls_ui/sl_tls.c
+# endif
 endif
 
 

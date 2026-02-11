@@ -457,4 +457,12 @@
 #else
 #define CFG_MEM_CHECK_ENABLE                       0
 #endif
+
+#define MBEDTLS_USER_CONFIG_FILE "obk_mbedtls_config.h"
+#define MBEDTLS_ECDH_LEGACY_CONTEXT
+
+#define LWIP_ALTCP                                 1
+#define LWIP_ALTCP_TLS                             1
+#define LWIP_ALTCP_TLS_MBEDTLS                     1
+
 #endif // _SYS_CONFIG_H_
