@@ -571,20 +571,16 @@ SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/core/udp.c
 SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/netif/ethernet.c
 SRC_LWIP_C += ./beken378/func/lwip_intf/dhcpd/dhcp-server.c
 SRC_LWIP_C += ./beken378/func/lwip_intf/dhcpd/dhcp-server-main.c
-ifeq ($(LWIP_VERSION), lwip-2.0.2)
-SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/apps/httpd/httpd.c
-SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/apps/httpd/fs.c
-else
 SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/apps/http/httpd.c
 SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/apps/http/fs.c
-endif
 SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/apps/mqtt/mqtt.c
-# for MQTTS
+ifeq ("${CFG_MBEDTLS}", "1")
 SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/apps/altcp_tls/altcp_tls_mbedtls.c
 SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/apps/altcp_tls/altcp_tls_mbedtls_mem.c
 SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/core/altcp.c
 SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/core/altcp_tcp.c
 SRC_LWIP_C += ./beken378/func/lwip_intf/$(LWIP_VERSION)/src/core/altcp_alloc.c
+endif
 
 SRC_FUNC_C += ./beken378/func/misc/fake_clock.c
 SRC_FUNC_C += ./beken378/func/misc/pseudo_random.c
