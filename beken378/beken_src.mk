@@ -339,6 +339,7 @@ INCLUDES += -I$(ROOT_DIR)/beken378/driver/usb/src/uvc
 
 ifeq ("${CFG_MBEDTLS}", "1")
 INCLUDES += -I$(ROOT_DIR)/beken378/func/mbedtls/$(MBEDTLS_VERSION)/include
+INCLUDES += -I$(ROOT_DIR)/beken378/func/mbedtls/$(MBEDTLS_VERSION)/include/mbedtls
 INCLUDES += -I$(ROOT_DIR)/beken378/func/mbedtls/$(MBEDTLS_VERSION)/library
 INCLUDES += -I$(ROOT_DIR)/beken378/func/mbedtls/mbedtls-port/inc
 endif
@@ -785,6 +786,12 @@ endif
 ifeq ("${CFG_MBEDTLS}", "1")
 SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/tls_hardware.c
 SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/tls_mem.c
+SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/ecp_curves_alt.c
+SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/ecp_alt.c
+SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/timing_alt.c
+SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/tls_certificate.c
+SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/tls_client.c
+SRC_MBEDTLS_C += ./beken378/func/mbedtls/mbedtls-port/src/tls_net.c
 MBEDTLS_LIB_DIRS += ./beken378/func/mbedtls/$(MBEDTLS_VERSION)/library
 SRC_MBEDTLS_C += $(foreach dir, $(MBEDTLS_LIB_DIRS), $(wildcard $(dir)/*.c))
 endif

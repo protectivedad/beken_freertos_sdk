@@ -15,6 +15,12 @@
 #ifndef _SYS_CONFIG_H_
 #define _SYS_CONFIG_H_
 
+#define PLATFORM_BEKEN 1
+#define PLATFORM_BEKEN_NEW 1
+#define PLATFORM_BK7231N 1
+
+#include "../../../src/obk_config.h"
+
 /*SUMMARY: macro--1: OPEN; --0:CLOSE*/
 
 /* uart2 for debug, and generally, uart1 is used for communication.
@@ -458,14 +464,12 @@
 #define CFG_MEM_CHECK_ENABLE                       0
 #endif
 
-#undef  MBEDTLS_ECP_ALT
 #define MBEDTLS_USER_CONFIG_FILE "obk_mbedtls_config.h"
-#define MBEDTLS_ECDH_LEGACY_CONTEXT
 
-#define MEMP_NUM_ALTCP_PCB 4
-
+#if ENABLE_MQTT_TLS
 #define LWIP_ALTCP                                 1
 #define LWIP_ALTCP_TLS                             1
 #define LWIP_ALTCP_TLS_MBEDTLS                     1
+#endif
 
 #endif // _SYS_CONFIG_H_

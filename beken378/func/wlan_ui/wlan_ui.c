@@ -50,6 +50,7 @@
 #include "wpa_psk_cache.h"
 #include "drv_model_pub.h"
 #include "str_pub.h"
+#include "ap_idle_pub.h"
 
 #if CFG_WPA_CTRL_IFACE
 #include "wlan_defs_pub.h"

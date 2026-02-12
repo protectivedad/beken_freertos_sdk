@@ -17,6 +17,10 @@
 
 #include "typedef.h"
 
+extern void start_global_ap_bcn_timer ( void );
+extern void stop_global_ap_bcn_timer ( void );
+extern void ap_bcn_timer_real_handler ( void );
+extern void ap_idle_stop ( void );
 extern void ap_ps_enable_set ( void );
 extern void ap_ps_enable_clear ( void );
 extern UINT32 ap_ps_enable_get ( void );

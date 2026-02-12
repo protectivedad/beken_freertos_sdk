@@ -206,7 +206,6 @@ extern void tls_mbedtls_mem_free(void *ptr);
 // #define tls_free    os_free
 // #define tls_realloc os_realloc
 // #define tls_calloc  os_calloc
-
 #else  /////
 
 /**
